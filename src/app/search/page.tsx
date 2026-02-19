@@ -2,8 +2,13 @@ import { prisma } from "@/lib/prisma";
 import { PostCard } from "@/components/post-card";
 import { Pagination } from "@/components/pagination";
 import { SearchX } from "lucide-react";
+import type { Prisma } from "@prisma/client";
 
 const POSTS_PER_PAGE = 9;
+
+type PostWithRelations = Prisma.PostGetPayload<{
+  include: { category: true; tags: { include: { tag: true } } };
+}>;
 
 interface SearchPageProps {
   searchParams: Promise<{ q?: string; page?: string }>;
@@ -14,7 +19,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const currentPage = parseInt(page || "1", 10);
   const query = q?.trim() || "";
 
-  let posts: Awaited<ReturnType<typeof prisma.post.findMany>> = [];
+  let posts: PostWithRelations[] = [];
   let total = 0;
 
   if (query) {

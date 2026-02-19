@@ -41,7 +41,7 @@ export function MarkdownEditor({
       <MDEditor
         value={value}
         onChange={onChange}
-        placeholder={placeholder}
+        textareaProps={{ placeholder }}
         height={minHeight}
         preview="live"
         visibleDragbar={false}
