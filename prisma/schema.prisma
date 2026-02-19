@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Post {
+  id          Int        @id @default(autoincrement())
+  title       String     @db.VarChar(255)
+  slug        String     @unique @db.VarChar(255)
+  content     String     @db.Text
+  excerpt     String?    @db.Text
+  coverImage  String?    @db.VarChar(500)
+  published   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  categoryId  Int?
+  category    Category?  @relation(fields: [categoryId], references: [id])
+  tags        PostTag[]
+  comments    Comment[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([published])
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(100)
+  slug        String    @unique @db.VarChar(100)
+  description String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  posts       Post[]
+
+  @@index([slug])
+}
+
+model Tag {
+  id        Int       @id @default(autoincrement())
+  name      String    @db.VarChar(50)
+  slug      String    @unique @db.VarChar(50)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  posts     PostTag[]
+
+  @@index([slug])
+}
+
+model PostTag {
+  postId    Int
+  tagId     Int
+
+  post      Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  tag       Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([postId, tagId])
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  author    String   @db.VarChar(100)
+  email     String   @db.VarChar(255)
+  content   String   @db.Text
+  createdAt DateTime @default(now())
+
+  postId    Int
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
