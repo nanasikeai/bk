@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { DeletePostButton } from "@/components/delete-post-button";
 
 export default async function AdminPostsPage() {
   const posts = await prisma.post.findMany({
@@ -81,14 +82,17 @@ export default async function AdminPostsPage() {
                     {formatDate(post.createdAt)}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/posts/${post.id}`}>编辑</Link>
-                    </Button>
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/posts/${post.slug}`} target="_blank">
-                        查看
-                      </Link>
-                    </Button>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/admin/posts/${post.id}`}>编辑</Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link href={`/posts/${post.slug}`} target="_blank">
+                          查看
+                        </Link>
+                      </Button>
+                      <DeletePostButton postId={post.id} postTitle={post.title} />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
