@@ -3,7 +3,8 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads");
+// 存到项目根目录 uploads，由 API 提供访问，不依赖 public 静态托管（线上环境更可靠）
+const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
 export async function POST(request: NextRequest) {
   const ok = await isAdminAuthenticated();
@@ -46,10 +47,7 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes);
     await writeFile(filePath, buffer);
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-    const url = baseUrl ? `${baseUrl}/uploads/${name}` : `/uploads/${name}`;
-
-    return NextResponse.json({ url });
+    return NextResponse.json({ url: `/api/uploads/${name}` });
   } catch (err) {
     console.error("Upload error:", err);
     return NextResponse.json(
