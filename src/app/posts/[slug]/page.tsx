@@ -87,10 +87,18 @@ export default async function PostPage({ params }: PostPageProps) {
             </Link>
           )}
           <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          <div className="flex items-center gap-4 text-muted-foreground">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
             <time dateTime={post.createdAt.toString()}>
               {formatDate(post.createdAt)}
             </time>
+            {post.updatedAt.getTime() - post.createdAt.getTime() > 60 * 1000 && (
+              <span>
+                最近编辑于{" "}
+                <time dateTime={post.updatedAt.toString()}>
+                  {formatDate(post.updatedAt)}
+                </time>
+              </span>
+            )}
           </div>
           {tags.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-4">
