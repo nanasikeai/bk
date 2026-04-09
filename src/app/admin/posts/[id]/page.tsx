@@ -177,11 +177,11 @@ export default function EditPostPage({ params }: { params: Promise<{ id: string 
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="content">内容（所见即所得，支持 Markdown 粘贴）</Label>
+          <Label htmlFor="content">内容（富文本，直接保存 HTML）</Label>
           <RichTextEditor
             value={content}
             onChange={setContent}
-            placeholder="在此编写内容，支持 Markdown 粘贴导入…"
+            placeholder="在此编写内容，支持富文本编辑与图片粘贴…"
             minHeight={400}
           />
         </div>

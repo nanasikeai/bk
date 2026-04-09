@@ -5,7 +5,7 @@ import { formatDate } from "@/lib/utils";
 import { DEFAULT_COVER_IMAGE } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { MarkdownRenderer } from "@/components/markdown-renderer";
+import { HtmlRenderer } from "@/components/html-renderer";
 import { CommentForm } from "@/components/comment-form";
 import { CommentList } from "@/components/comment-list";
 
@@ -120,7 +120,7 @@ export default async function PostPage({ params }: PostPageProps) {
         <Separator className="mb-8" />
 
         <div className="prose-container">
-          <MarkdownRenderer content={post.content} />
+          <HtmlRenderer content={post.content} />
         </div>
 
         <Separator className="my-12" />
