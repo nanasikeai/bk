@@ -3,7 +3,15 @@
 import "react-quill-new/dist/quill.snow.css";
 import "highlight.js/styles/github-dark.css";
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  type ComponentProps,
+  type ForwardRefExoticComponent,
+  type RefAttributes,
+} from "react";
 import type ReactQuillType from "react-quill-new";
 import hljs from "highlight.js";
 import javascript from "highlight.js/lib/languages/javascript";
@@ -14,7 +22,11 @@ import xml from "highlight.js/lib/languages/xml";
 import css from "highlight.js/lib/languages/css";
 import { cn } from "@/lib/utils";
 
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+const ReactQuill = dynamic(() => import("react-quill-new"), {
+  ssr: false,
+}) as ForwardRefExoticComponent<
+  ComponentProps<typeof ReactQuillType> & RefAttributes<ReactQuillType>
+>;
 
 hljs.registerLanguage("javascript", javascript);
 hljs.registerLanguage("js", javascript);
@@ -128,9 +140,11 @@ export function RichTextEditor({
   useEffect(() => {
     const quill = editorRef.current?.getEditor?.();
     if (!quill) return;
-    const toolbar = quill.getModule("toolbar");
-    toolbar?.addHandler("image", handleSelectImage);
-    toolbar?.addHandler("code-block", () => {
+    const toolbar = quill.getModule("toolbar") as {
+      addHandler?: (name: string, handler: () => void) => void;
+    };
+    toolbar.addHandler?.("image", handleSelectImage);
+    toolbar.addHandler?.("code-block", () => {
       const current = quill.getFormat();
       if (current["code-block"]) {
         quill.format("code-block", false, "user");

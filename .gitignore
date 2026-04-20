@@ -20,6 +20,10 @@
 # production
 /build
 
+# deploy bundle (local only)
+/deploy-bundle/
+deploy-bundle.tgz
+
 # misc
 .DS_Store
 *.pem
