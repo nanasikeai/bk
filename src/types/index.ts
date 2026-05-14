@@ -6,6 +6,7 @@ export interface Post {
   excerpt: string | null;
   coverImage: string | null;
   published: boolean;
+  viewCount: number;
   createdAt: Date;
   updatedAt: Date;
   categoryId: number | null;

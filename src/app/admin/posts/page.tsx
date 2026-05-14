@@ -48,6 +48,7 @@ export default async function AdminPostsPage() {
                 <TableHead>标题</TableHead>
                 <TableHead>分类</TableHead>
                 <TableHead>状态</TableHead>
+                <TableHead>浏览量</TableHead>
                 <TableHead>日期</TableHead>
                 <TableHead className="text-right">操作</TableHead>
               </TableRow>
@@ -77,6 +78,9 @@ export default async function AdminPostsPage() {
                     <Badge variant={post.published ? "default" : "outline"}>
                       {post.published ? "已发布" : "草稿"}
                     </Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {post.viewCount}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
                     {formatDate(post.createdAt)}

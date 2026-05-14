@@ -18,6 +18,7 @@ model Post {
   excerpt     String?    @db.Text
   coverImage  String?    @db.VarChar(500)
   published   Boolean    @default(false)
+  viewCount   Int        @default(0)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 

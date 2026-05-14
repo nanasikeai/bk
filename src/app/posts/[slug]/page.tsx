@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
@@ -13,14 +14,7 @@ interface PostPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateStaticParams() {
-  const posts = await prisma.post.findMany({
-    where: { published: true },
-    select: { slug: true },
-  });
-
-  return posts.map((post) => ({ slug: post.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: PostPageProps) {
   const { slug } = await params;
@@ -56,8 +50,9 @@ export async function generateMetadata({ params }: PostPageProps) {
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
 
-  const post = await prisma.post.findUnique({
-    where: { slug },
+  const post = await prisma.post.update({
+    where: { slug, published: true },
+    data: { viewCount: { increment: 1 } },
     include: {
       category: true,
       tags: {
@@ -67,11 +62,12 @@ export default async function PostPage({ params }: PostPageProps) {
         orderBy: { createdAt: "desc" },
       },
     },
+  }).catch((error) => {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+      notFound();
+    }
+    throw error;
   });
-
-  if (!post || !post.published) {
-    notFound();
-  }
 
   const tags = post.tags.map((t) => t.tag);
 
@@ -91,6 +87,7 @@ export default async function PostPage({ params }: PostPageProps) {
             <time dateTime={post.createdAt.toString()}>
               {formatDate(post.createdAt)}
             </time>
+            <span>浏览 {post.viewCount}</span>
             {post.updatedAt.getTime() - post.createdAt.getTime() > 60 * 1000 && (
               <span>
                 最近编辑于{" "}

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import type { Post, Category, Tag } from "@/types";
 
 interface PostCardProps {
-  post: Pick<Post, "id" | "title" | "slug" | "excerpt" | "createdAt" | "coverImage"> & {
+  post: Pick<Post, "id" | "title" | "slug" | "excerpt" | "createdAt" | "coverImage" | "viewCount"> & {
     category?: Pick<Category, "name" | "slug"> | null;
     tags?: Pick<Tag, "name" | "slug">[];
   };
@@ -43,6 +43,7 @@ export function PostCard({ post }: PostCardProps) {
             <time dateTime={post.createdAt.toString()}>
               {formatDate(post.createdAt)}
             </time>
+            <span>浏览 {post.viewCount}</span>
           </div>
           {post.tags && post.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-3">
