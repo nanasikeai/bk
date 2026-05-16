@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   const returnTo = sanitizeReturnTo(request.nextUrl.searchParams.get("redirect"));
 
   if (!clientId) {
-    const url = new URL(returnTo, request.url);
+    const url = new URL(returnTo, getBaseUrl(request));
     url.searchParams.set("commentAuth", "missing-config");
     return NextResponse.redirect(url);
   }

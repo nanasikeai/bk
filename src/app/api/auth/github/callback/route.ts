@@ -23,7 +23,7 @@ function getBaseUrl(request: NextRequest) {
 }
 
 function redirectWithStatus(request: NextRequest, returnTo: string, status: string) {
-  const url = new URL(returnTo, request.url);
+  const url = new URL(returnTo, getBaseUrl(request));
   url.searchParams.set("commentAuth", status);
   return NextResponse.redirect(url);
 }
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
   }
 
   const githubUser = (await userResponse.json()) as GitHubUserResponse;
-  const response = NextResponse.redirect(new URL(oauth.returnTo, request.url));
+  const response = NextResponse.redirect(new URL(oauth.returnTo, getBaseUrl(request)));
   setCommentUserCookie(response, {
     githubId: String(githubUser.id),
     login: githubUser.login,
