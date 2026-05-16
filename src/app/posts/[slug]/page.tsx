@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: PostPageProps) {
 
   if (!post) return {};
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   return {
     title: post.title,

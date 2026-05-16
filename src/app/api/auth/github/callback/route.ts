@@ -19,7 +19,7 @@ interface GitHubUserResponse {
 }
 
 function getBaseUrl(request: NextRequest) {
-  return process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
+  return process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
 }
 
 function redirectWithStatus(request: NextRequest, returnTo: string, status: string) {

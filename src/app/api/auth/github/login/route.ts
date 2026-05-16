@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sanitizeReturnTo, setOAuthCookies } from "@/lib/comment-auth";
 
 function getBaseUrl(request: NextRequest) {
-  return process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
+  return process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || request.nextUrl.origin;
 }
 
 export async function GET(request: NextRequest) {
