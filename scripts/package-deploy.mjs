@@ -1,5 +1,6 @@
 /**
  * 生成精简部署目录 deploy-bundle/（可选 deploy-bundle.tgz）
+ * 压缩包解压后直接得到部署文件，不额外套 deploy-bundle/ 目录。
  * 不含：node_modules、.git、.env、源码与仅开发用配置；.next 内去掉缓存/诊断/开发残留以减小体积。
  */
 import { execSync } from "child_process";
@@ -85,14 +86,14 @@ if (fs.existsSync(envExample)) {
 
 let archived = false;
 try {
-  execSync(`tar -caf "${tgzPath}" "${BUNDLE}"`, { cwd: root, stdio: "inherit" });
+  execSync(`tar -caf "${tgzPath}" -C "${outDir}" .`, { cwd: root, stdio: "inherit" });
   archived = true;
 } catch {
   console.warn("\n未生成 .tgz（本机无 tar 或执行失败），请手动压缩 deploy-bundle 文件夹。\n");
 }
 
 console.log("\n已生成部署包目录:", outDir);
-if (archived) console.log("已生成压缩包:", tgzPath);
+if (archived) console.log("已生成压缩包（解压后直接是部署文件）:", tgzPath);
 console.log(
   "\n已剔除: node_modules、.git、.env、src、开发依赖配置；.next 内已去掉 cache / diagnostics / dev。\n服务器上: 解压后 npm ci --omit=dev && npx prisma generate && 新建 .env && npx prisma db push && npm run start\n"
 );
