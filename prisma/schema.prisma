@@ -10,6 +10,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum CommentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Post {
   id          Int        @id @default(autoincrement())
   title       String     @db.VarChar(255)
@@ -68,14 +74,22 @@ model PostTag {
 }
 
 model Comment {
-  id        Int      @id @default(autoincrement())
-  author    String   @db.VarChar(100)
-  email     String   @db.VarChar(255)
-  content   String   @db.Text
-  createdAt DateTime @default(now())
+  id               Int           @id @default(autoincrement())
+  author           String        @db.VarChar(100)
+  email            String?       @db.VarChar(255)
+  content          String        @db.Text
+  status           CommentStatus @default(APPROVED)
+  githubId         String?       @db.VarChar(64)
+  githubLogin      String?       @db.VarChar(100)
+  githubAvatarUrl  String?       @db.VarChar(500)
+  githubProfileUrl String?       @db.VarChar(500)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
-  postId    Int
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId           Int
+  post             Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@index([postId])
+  @@index([status])
+  @@index([githubId])
 }

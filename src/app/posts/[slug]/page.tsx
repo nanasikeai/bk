@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
+import { getCommentUser } from "@/lib/comment-auth";
 import { DEFAULT_COVER_IMAGE } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
@@ -49,6 +50,7 @@ export async function generateMetadata({ params }: PostPageProps) {
 
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
+  const commentUser = await getCommentUser();
 
   const post = await prisma.post.update({
     where: { slug, published: true },
@@ -59,6 +61,7 @@ export default async function PostPage({ params }: PostPageProps) {
         include: { tag: true },
       },
       comments: {
+        where: { status: "APPROVED" },
         orderBy: { createdAt: "desc" },
       },
     },
@@ -123,9 +126,10 @@ export default async function PostPage({ params }: PostPageProps) {
         <Separator className="my-12" />
 
         <section>
+          <div id="comments" />
           <h2 className="text-2xl font-bold mb-6">评论 ({post.comments.length})</h2>
           <div className="space-y-8">
-            <CommentForm postId={post.id} />
+            <CommentForm postId={post.id} user={commentUser} />
             <CommentList comments={post.comments} />
           </div>
         </section>

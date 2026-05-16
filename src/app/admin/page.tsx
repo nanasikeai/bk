@@ -3,11 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FileText, Folder, Tag, MessageSquare } from "lucide-react";
 
 export default async function AdminDashboard() {
-  const [postCount, categoryCount, tagCount, commentCount] = await Promise.all([
+  const [postCount, categoryCount, tagCount, commentCount, pendingCommentCount] = await Promise.all([
     prisma.post.count(),
     prisma.category.count(),
     prisma.tag.count(),
     prisma.comment.count(),
+    prisma.comment.count({ where: { status: "PENDING" } }),
   ]);
 
   const stats = [
@@ -34,7 +35,7 @@ export default async function AdminDashboard() {
     },
     {
       title: "评论数",
-      value: commentCount,
+      value: pendingCommentCount > 0 ? `${commentCount} (${pendingCommentCount} 待审)` : commentCount,
       icon: MessageSquare,
       iconColor: "text-emerald-500",
       bgColor: "bg-emerald-500/10",

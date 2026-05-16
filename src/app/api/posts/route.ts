@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { requireAdminApi } from "@/lib/admin-api";
 
 export async function GET(request: NextRequest) {
   try {
@@ -7,9 +9,12 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") || "1", 10);
     const limit = parseInt(searchParams.get("limit") || "10", 10);
     const published = searchParams.get("published");
+    const isAdmin = await isAdminAuthenticated();
 
     const where = {
-      ...(published !== null && { published: published === "true" }),
+      ...(isAdmin
+        ? published !== null && { published: published === "true" }
+        : { published: true }),
     };
 
     const [posts, total] = await Promise.all([
@@ -48,6 +53,9 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireAdminApi();
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const { title, slug, content, excerpt, coverImage, published, categoryId, tagIds } = body;

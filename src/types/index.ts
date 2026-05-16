@@ -37,9 +37,15 @@ export interface Tag {
 export interface Comment {
   id: number;
   author: string;
-  email: string;
+  email: string | null;
   content: string;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  githubId: string | null;
+  githubLogin: string | null;
+  githubAvatarUrl: string | null;
+  githubProfileUrl: string | null;
   createdAt: Date;
+  updatedAt: Date;
   postId: number;
 }
 

@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdminApi } from "@/lib/admin-api";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
+  const unauthorized = await requireAdminApi();
+  if (unauthorized) return unauthorized;
+
   try {
     const { id } = await params;
     const post = await prisma.post.findUnique({
@@ -36,6 +40,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
+  const unauthorized = await requireAdminApi();
+  if (unauthorized) return unauthorized;
+
   try {
     const { id } = await params;
     const body = await request.json();
@@ -123,6 +130,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 }
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
+  const unauthorized = await requireAdminApi();
+  if (unauthorized) return unauthorized;
+
   try {
     const { id } = await params;
     const postId = parseInt(id, 10);

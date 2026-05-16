@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Folder, Tag, Home } from "lucide-react";
+import { FileText, Folder, Home, MessageSquare, Tag } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
@@ -10,6 +10,7 @@ const navItems = [
   { href: "/admin/posts", label: "文章管理", icon: FileText, iconColor: "text-emerald-500" },
   { href: "/admin/categories", label: "分类管理", icon: Folder, iconColor: "text-amber-500" },
   { href: "/admin/tags", label: "标签管理", icon: Tag, iconColor: "text-violet-500" },
+  { href: "/admin/comments", label: "评论管理", icon: MessageSquare, iconColor: "text-sky-500" },
 ];
 
 export function AdminNav() {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { requireAdminApi } from "@/lib/admin-api";
 
 export async function GET() {
   try {
@@ -23,6 +24,9 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const unauthorized = await requireAdminApi();
+  if (unauthorized) return unauthorized;
+
   try {
     const body = await request.json();
     const { name, slug } = body;

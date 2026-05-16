@@ -17,7 +17,28 @@ export function CommentList({ comments }: CommentListProps) {
       {comments.map((comment) => (
         <div key={comment.id} className="border rounded-lg p-4">
           <div className="flex items-center justify-between mb-2">
-            <div className="font-medium">{comment.author}</div>
+            <div className="flex items-center gap-3">
+              {comment.githubAvatarUrl && (
+                <img
+                  src={comment.githubAvatarUrl}
+                  alt={comment.githubLogin || comment.author}
+                  className="h-8 w-8 rounded-full"
+                />
+              )}
+              <div>
+                <div className="font-medium">{comment.author}</div>
+                {comment.githubLogin && comment.githubProfileUrl && (
+                  <a
+                    href={comment.githubProfileUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-muted-foreground hover:underline"
+                  >
+                    @{comment.githubLogin}
+                  </a>
+                )}
+              </div>
+            </div>
             <time className="text-sm text-muted-foreground" dateTime={comment.createdAt.toString()}>
               {formatDate(comment.createdAt)}
             </time>
