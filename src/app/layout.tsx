@@ -25,24 +25,24 @@ const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "htt
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
   title: {
-    default: "我的博客",
-    template: "%s | 我的博客",
+    default: "boxboxs",
+    template: "%s | boxboxs",
   },
   description: "使用 Next.js、TypeScript 和 Tailwind CSS 构建的个人博客",
   keywords: ["博客", "技术", "编程", "前端开发"],
-  authors: [{ name: "博客作者" }],
-  creator: "博客作者",
+  authors: [{ name: "boxboxs" }],
+  creator: "boxboxs",
   openGraph: {
     type: "website",
     locale: "zh_CN",
     url: baseUrl,
-    title: "我的博客",
+    title: "boxboxs",
     description: "使用 Next.js、TypeScript 和 Tailwind CSS 构建的个人博客",
-    siteName: "我的博客",
+    siteName: "boxboxs",
   },
   twitter: {
     card: "summary_large_image",
-    title: "我的博客",
+    title: "boxboxs",
     description: "使用 Next.js、TypeScript 和 Tailwind CSS 构建的个人博客",
   },
   robots: {

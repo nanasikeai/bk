@@ -26,7 +26,7 @@ export default async function HomePage() {
   return (
     <div className="container py-8">
       <section className="mb-12">
-        <h1 className="text-4xl font-bold mb-4">欢迎来到我的博客</h1>
+        <h1 className="text-4xl font-bold mb-4">欢迎来到 boxboxs</h1>
         <p className="text-xl text-muted-foreground">
           分享我的想法、观点和经验的地方。
         </p>
