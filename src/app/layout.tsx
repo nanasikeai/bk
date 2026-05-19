@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 
 // 每次请求都重新渲染，避免数据库更新后页面仍显示旧数据
@@ -7,6 +8,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
+import { VisitTracker } from "@/components/visit-tracker";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -65,6 +67,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Suspense fallback={null}>
+            <VisitTracker />
+          </Suspense>
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />

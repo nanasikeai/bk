@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { formatDate } from "@/lib/utils";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { getCommentUser } from "@/lib/comment-auth";
 import { DEFAULT_COVER_IMAGE } from "@/lib/constants";
 import { Badge } from "@/components/ui/badge";
@@ -48,29 +49,45 @@ export async function generateMetadata({ params }: PostPageProps) {
   };
 }
 
+const postInclude = {
+  category: true,
+  tags: {
+    include: { tag: true },
+  },
+  comments: {
+    where: { status: "APPROVED" as const },
+    orderBy: { createdAt: "desc" as const },
+  },
+};
+
 export default async function PostPage({ params }: PostPageProps) {
   const { slug } = await params;
-  const commentUser = await getCommentUser();
+  const [commentUser, isAdmin] = await Promise.all([
+    getCommentUser(),
+    isAdminAuthenticated(),
+  ]);
 
-  const post = await prisma.post.update({
-    where: { slug, published: true },
-    data: { viewCount: { increment: 1 } },
-    include: {
-      category: true,
-      tags: {
-        include: { tag: true },
-      },
-      comments: {
-        where: { status: "APPROVED" },
-        orderBy: { createdAt: "desc" },
-      },
-    },
-  }).catch((error) => {
-    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
-      notFound();
-    }
-    throw error;
-  });
+  const post = isAdmin
+    ? await prisma.post.findUnique({
+        where: { slug, published: true },
+        include: postInclude,
+      })
+    : await prisma.post
+        .update({
+          where: { slug, published: true },
+          data: { viewCount: { increment: 1 } },
+          include: postInclude,
+        })
+        .catch((error) => {
+          if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+            notFound();
+          }
+          throw error;
+        });
+
+  if (!post) {
+    notFound();
+  }
 
   const tags = post.tags.map((t) => t.tag);
 
