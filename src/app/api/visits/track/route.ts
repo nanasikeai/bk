@@ -36,14 +36,19 @@ export async function POST(request: NextRequest) {
     }
 
     const { visitorId, isNew } = await getOrCreateVisitorId();
-    const referrer = request.headers.get("referer");
+    const referrer =
+      typeof body?.referrer === "string" ? body.referrer || null : null;
     const search = path.includes("?") ? path.slice(path.indexOf("?")) : "";
+    const siteHost =
+      request.headers.get("x-forwarded-host")?.split(",")[0]?.trim() ||
+      request.headers.get("host");
 
     await recordSiteVisit({
       visitorId,
       path: pathname,
       referrer,
       search,
+      siteHost,
     });
 
     if (isNew) {

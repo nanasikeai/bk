@@ -39,15 +39,36 @@ const KNOWN_SOURCES: Record<string, string> = {
 const BOT_PATTERN =
   /bot|crawler|spider|slurp|facebookexternalhit|preview|headless/i;
 
-function getSiteHostname() {
+function normalizeHost(hostname: string) {
+  return hostname.replace(/^www\./, "").toLowerCase();
+}
+
+function getSiteHosts(extraHost?: string | null) {
+  const hosts = new Set<string>(["localhost", "127.0.0.1"]);
+
   const siteUrl =
     process.env.SITE_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
     "http://localhost:3000";
+
   try {
-    return new URL(siteUrl).hostname.replace(/^www\./, "");
+    hosts.add(normalizeHost(new URL(siteUrl).hostname));
   } catch {
-    return "localhost";
+    // ignore invalid SITE_URL
+  }
+
+  if (extraHost) {
+    hosts.add(normalizeHost(extraHost.split(":")[0] || extraHost));
+  }
+
+  return hosts;
+}
+
+function isSameSiteReferrer(referrer: string, siteHosts: Set<string>) {
+  try {
+    return siteHosts.has(normalizeHost(new URL(referrer).hostname));
+  } catch {
+    return false;
   }
 }
 
@@ -70,8 +91,10 @@ export function shouldSkipVisitPath(path: string) {
 
 export function resolveVisitSource(
   referrer: string | null,
-  search: string
+  search: string,
+  siteHost?: string | null
 ): { source: string; referrer: string | null } {
+  const siteHosts = getSiteHosts(siteHost);
   const params = new URLSearchParams(search.startsWith("?") ? search : `?${search}`);
   const utmSource = params.get("utm_source");
   const utmMedium = params.get("utm_medium");
@@ -90,10 +113,9 @@ export function resolveVisitSource(
 
   try {
     const refUrl = new URL(referrer);
-    const host = refUrl.hostname.replace(/^www\./, "");
-    const siteHost = getSiteHostname().replace(/^www\./, "");
+    const host = normalizeHost(refUrl.hostname);
 
-    if (host === siteHost || host === "localhost") {
+    if (isSameSiteReferrer(referrer, siteHosts)) {
       return { source: "站内跳转", referrer };
     }
 
@@ -139,8 +161,13 @@ export async function recordSiteVisit(input: {
   path: string;
   referrer: string | null;
   search: string;
+  siteHost?: string | null;
 }) {
-  const { source, referrer } = resolveVisitSource(input.referrer, input.search);
+  const { source, referrer } = resolveVisitSource(
+    input.referrer,
+    input.search,
+    input.siteHost
+  );
   const path = input.path.slice(0, 500);
 
   const recent = await prisma.siteVisit.findFirst({
