@@ -36,7 +36,7 @@ export function HtmlRenderer({ content, className }: HtmlRendererProps) {
     <div
       ref={containerRef}
       className={cn(
-        "prose prose-zinc dark:prose-invert max-w-none",
+        "prose prose-zinc dark:prose-invert max-w-none [overflow-wrap:anywhere]",
         "prose-headings:scroll-mt-14",
         "prose-a:text-primary prose-a:no-underline hover:prose-a:underline",
         "prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded",
