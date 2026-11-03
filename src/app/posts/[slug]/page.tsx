@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Prisma } from "@prisma/client";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { formatDate } from "@/lib/utils";
+import { formatDate, generateExcerpt } from "@/lib/utils";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { getCommentUser } from "@/lib/comment-auth";
 import { DEFAULT_COVER_IMAGE } from "@/lib/constants";
@@ -22,19 +22,21 @@ export async function generateMetadata({ params }: PostPageProps) {
   const { slug } = await params;
   const post = await prisma.post.findUnique({
     where: { slug },
-    select: { title: true, excerpt: true, coverImage: true, createdAt: true },
+    select: { title: true, content: true, excerpt: true, coverImage: true, createdAt: true },
   });
 
   if (!post) return {};
+
+  const description = post.excerpt?.trim() || generateExcerpt(post.content);
 
   const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   return {
     title: post.title,
-    description: post.excerpt,
+    description,
     openGraph: {
       title: post.title,
-      description: post.excerpt || undefined,
+      description: description || undefined,
       type: "article",
       publishedTime: post.createdAt.toISOString(),
       url: `${baseUrl}/posts/${slug}`,
@@ -43,7 +45,7 @@ export async function generateMetadata({ params }: PostPageProps) {
     twitter: {
       card: "summary_large_image",
       title: post.title,
-      description: post.excerpt || undefined,
+      description: description || undefined,
       images: [post.coverImage || DEFAULT_COVER_IMAGE],
     },
   };

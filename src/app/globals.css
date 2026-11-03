@@ -92,61 +92,103 @@
   }
 }
 
-/* ── Quill editor: basic typography for the editing area ── */
-.ql-editor {
-  font-size: 1rem;
-  line-height: 1.75;
+/* ── 文章正文（前台渲染与编辑器内容区共用） ── */
+.prose pre {
+  background: #0d1117 !important;
+  color: #e6edf3 !important;
+  border-radius: 0.375rem;
+  padding: 0.75rem 1rem;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  overflow-x: auto;
 }
 
-.ql-editor h1 { font-size: 2em; font-weight: 700; margin: 0.67em 0; }
-.ql-editor h2 { font-size: 1.5em; font-weight: 600; margin: 0.83em 0; }
-.ql-editor h3 { font-size: 1.25em; font-weight: 600; margin: 1em 0; }
-.ql-editor p { margin: 0.5em 0; }
-.ql-editor blockquote {
-  border-left: 4px solid hsl(var(--border));
-  padding-left: 1em;
+.prose pre code {
+  background: transparent !important;
+  color: inherit;
+  padding: 0 !important;
+  font-size: inherit;
+}
+
+.prose mark {
+  background-color: rgb(250 204 21 / 0.4);
+  color: inherit;
+  padding: 0 0.1em;
+  border-radius: 2px;
+}
+
+.prose table td,
+.prose table th {
+  border: 1px solid hsl(var(--border));
+  padding: 0.4em 0.75em;
+  vertical-align: top;
+}
+
+.prose table th {
+  background: hsl(var(--muted));
+}
+
+.prose table p {
+  margin: 0;
+}
+
+.prose ul[data-type="taskList"] {
+  list-style: none;
+  padding-left: 0;
+}
+
+.prose ul[data-type="taskList"] li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5em;
+  padding-left: 0;
+}
+
+.prose ul[data-type="taskList"] li > label {
+  margin-top: 0.3em;
+  user-select: none;
+}
+
+.prose ul[data-type="taskList"] li > div {
+  flex: 1;
+}
+
+.prose ul[data-type="taskList"] li > div > p {
+  margin: 0;
+}
+
+.prose ul[data-type="taskList"] li[data-checked="true"] > div {
   color: hsl(var(--muted-foreground));
-  margin: 0.5em 0;
+  text-decoration: line-through;
 }
 
-/* ── Code blocks: dark background + hljs highlighting ── */
-.ql-code-block-container,
-.ql-syntax,
-pre.ql-syntax {
-  background: #0d1117 !important;
-  color: #e6edf3 !important;
-  border-radius: 0.375rem;
-  padding: 0.75rem 1rem;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  overflow-x: auto;
+/* 旧文章（Quill）的段落缩进，统一按首行缩进显示 */
+.prose [class*="ql-indent-"] { text-indent: 2em; }
+
+/* ── 编辑器 ── */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  color: hsl(var(--muted-foreground));
+  pointer-events: none;
 }
 
-/* ── Language selector dropdown ── */
-.ql-code-block-container .ql-ui {
-  color: #8b949e !important;
-  background: #161b22;
-  border: 1px solid #30363d;
-  border-radius: 0.25rem;
-  padding: 0.125rem 0.25rem;
-  font-size: 0.75rem;
+.tiptap table .selectedCell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: hsl(var(--primary) / 0.12);
+  pointer-events: none;
 }
 
-.ql-code-block-container .ql-ui option {
-  background: #161b22;
-  color: #e6edf3;
+.tiptap table td,
+.tiptap table th {
+  position: relative;
 }
 
-/* ── Front-end renderer: code blocks ── */
-.prose pre.ql-syntax,
-.prose pre[data-language] {
-  background: #0d1117 !important;
-  color: #e6edf3 !important;
-  border-radius: 0.375rem;
-  padding: 0.75rem 1rem;
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  overflow-x: auto;
+.tiptap img.ProseMirror-selectednode,
+.tiptap [data-resize-container].ProseMirror-selectednode img {
+  outline: 2px solid hsl(var(--ring));
 }

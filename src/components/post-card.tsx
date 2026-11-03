@@ -1,18 +1,20 @@
 import Link from "next/link";
-import { formatDate } from "@/lib/utils";
+import { formatDate, generateExcerpt } from "@/lib/utils";
 import { DEFAULT_COVER_IMAGE } from "@/lib/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { Post, Category, Tag } from "@/types";
 
 interface PostCardProps {
-  post: Pick<Post, "id" | "title" | "slug" | "excerpt" | "createdAt" | "coverImage" | "viewCount"> & {
+  post: Pick<Post, "id" | "title" | "slug" | "content" | "excerpt" | "createdAt" | "coverImage" | "viewCount"> & {
     category?: Pick<Category, "name" | "slug"> | null;
     tags?: Pick<Tag, "name" | "slug">[];
   };
 }
 
 export function PostCard({ post }: PostCardProps) {
+  const excerpt = post.excerpt?.trim() || generateExcerpt(post.content, 120);
+
   return (
     <Card className="group overflow-hidden transition-all hover:shadow-lg">
       <Link href={`/posts/${post.slug}`}>
@@ -34,9 +36,9 @@ export function PostCard({ post }: PostCardProps) {
           </CardTitle>
         </CardHeader>
         <CardContent className="p-4 pt-0">
-          {post.excerpt && (
+          {excerpt && (
             <p className="text-muted-foreground text-sm line-clamp-2 mb-3">
-              {post.excerpt}
+              {excerpt}
             </p>
           )}
           <div className="flex items-center justify-between text-xs text-muted-foreground">

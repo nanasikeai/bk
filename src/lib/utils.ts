@@ -14,8 +14,19 @@ export function formatDate(date: Date | string): string {
   });
 }
 
+// 从正文 HTML 提取纯文本摘要（未填写摘要时使用）
 export function generateExcerpt(content: string, maxLength: number = 160): string {
-  const plainText = content.replace(/[#*`>\[\]]/g, "").trim();
+  const plainText = content
+    .replace(/<(pre|style|script)[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, "&")
+    .replace(/\s+/g, " ")
+    .trim();
   if (plainText.length <= maxLength) return plainText;
   return plainText.slice(0, maxLength).trim() + "...";
 }
