@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from "fs/promises";
 import path from "path";
+import { UPLOAD_DIR } from "@/lib/uploads";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
-
-// 存到项目根目录 uploads，由 API 提供访问，不依赖 public 静态托管（线上环境更可靠）
-const UPLOAD_DIR = path.join(process.cwd(), "uploads");
 
 export async function POST(request: NextRequest) {
   const ok = await isAdminAuthenticated();

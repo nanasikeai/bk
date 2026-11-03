@@ -2,7 +2,9 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  // 本地 Windows 构建、线上 Ubuntu 22.04 运行，需同时生成 Linux 引擎
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {

@@ -135,26 +135,31 @@ export const metadata: Metadata = {
 
 ## 部署
 
-### 构建生产版本
+本地构建（Next standalone），上传到服务器后切换版本，健康检查失败自动回退。
 
 ```bash
-npm run build
+npm run deploy              # 构建并发布
+npm run deploy -- --db      # 同时同步数据库表结构（prisma db push，经 SSH 隧道）
+npm run deploy -- --dry-run # 只构建打包，不上传（产物在 .deploy/）
+npm run rollback            # 切回上一个版本
 ```
 
-### 启动生产服务器
+有未提交的改动时会先询问是否继续（`--allow-dirty` 跳过询问）；每个版本目录下的 `REVISION` 记录了对应的提交。
 
-```bash
-npm run start
-```
+前提：本机 `~/.ssh/config` 配置了主机别名 `blog`（root 密钥登录），服务器上以 `admin` 用户运行。
 
-### 部署到 Vercel
+服务器目录 `/home/admin/blog`：
 
-推荐使用 [Vercel](https://vercel.com) 部署：
+| 路径 | 说明 |
+|------|------|
+| `releases/<时间戳>/` | 各版本，保留最近 5 个 |
+| `current` | 指向当前运行版本的软链接 |
+| `shared/.env` | 线上环境变量，不随部署覆盖 |
+| `shared/uploads/` | 上传的图片 |
+| `shared/logs/` | 运行日志 |
+| `ecosystem.config.cjs` | pm2 配置（来自 `deploy/`） |
 
-1. 将代码推送到 Git 仓库
-2. 在 Vercel 导入项目
-3. 配置环境变量
-4. 部署
+Nginx 反向代理到 `127.0.0.1:3000`，应用只监听本机。
 
 ## 许可证
 
