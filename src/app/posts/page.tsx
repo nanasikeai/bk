@@ -36,8 +36,12 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
   }));
 
   return (
-    <div className="container py-8">
-      <h1 className="text-3xl font-bold mb-8">全部文章</h1>
+    <div className="journal-shell journal-page">
+      <header className="journal-page-heading">
+        <p className="journal-eyebrow"><span className="journal-small-rule" />THE ARCHIVE</p>
+        <h1 className="journal-heading">写过的，都在这里。</h1>
+        <p className="journal-description">一些技术笔记，一些日常记录。共 {total} 篇文章，慢慢翻阅。</p>
+      </header>
 
       {formattedPosts.length === 0 ? (
         <div className="text-center py-12">
@@ -45,7 +49,7 @@ export default async function PostsPage({ searchParams }: PostsPageProps) {
         </div>
       ) : (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="journal-index-list">
             {formattedPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}

@@ -64,9 +64,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   }));
 
   return (
-    <div className="container py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">搜索</h1>
+    <div className="journal-shell journal-page">
+      <header className="journal-page-heading">
+        <p className="journal-eyebrow"><span className="journal-small-rule" />FIND A THOUGHT</p>
+        <h1 className="journal-heading">在文字里找一找。</h1>
         {query && (
           <p className="text-muted-foreground">
             {total === 0
@@ -74,7 +75,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
               : `找到 ${total} 篇与 "${query}" 相关的文章`}
           </p>
         )}
-      </div>
+      </header>
 
       {!query ? (
         <div className="text-center py-12">
@@ -91,7 +92,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
         </div>
       ) : (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="journal-index-list">
             {formattedPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}

@@ -6,8 +6,8 @@ import { formatDate, generateExcerpt } from "@/lib/utils";
 import { isAdminAuthenticated } from "@/lib/admin-auth";
 import { getCommentUser } from "@/lib/comment-auth";
 import { DEFAULT_COVER_IMAGE } from "@/lib/constants";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
+import { ArrowLeft } from "lucide-react";
+import { ArticleToc } from "@/components/article-toc";
 import { HtmlRenderer } from "@/components/html-renderer";
 import { CommentForm } from "@/components/comment-form";
 import { CommentList } from "@/components/comment-list";
@@ -94,65 +94,38 @@ export default async function PostPage({ params }: PostPageProps) {
   const tags = post.tags.map((t) => t.tag);
 
   return (
-    <div className="container py-8">
-      <article className="max-w-3xl mx-auto">
-        <header className="mb-8">
-          {post.category && (
-            <Link href={`/categories/${post.category.slug}`}>
-              <Badge variant="secondary" className="mb-4">
-                {post.category.name}
-              </Badge>
-            </Link>
-          )}
-          <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
-            <time dateTime={post.createdAt.toString()}>
-              {formatDate(post.createdAt)}
-            </time>
+    <div className="journal-shell journal-reader-layout">
+      <article className="journal-reader">
+        <Link href="/posts" className="journal-back-link"><ArrowLeft aria-hidden="true" />回到文章列表</Link>
+        <header className="journal-reader-header">
+          <div className="journal-post-meta">
+            {post.category && <Link href={`/categories/${post.category.slug}`} className="text-primary">{post.category.name}</Link>}
+            <time dateTime={post.createdAt.toISOString()}>{formatDate(post.createdAt)}</time>
             <span>浏览 {post.viewCount}</span>
-            {post.updatedAt.getTime() - post.createdAt.getTime() > 60 * 1000 && (
-              <span>
-                最近编辑于{" "}
-                <time dateTime={post.updatedAt.toString()}>
-                  {formatDate(post.updatedAt)}
-                </time>
-              </span>
-            )}
           </div>
-          {tags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-4">
-              {tags.map((tag) => (
-                <Link key={tag.id} href={`/tags/${tag.slug}`}>
-                  <Badge variant="outline">{tag.name}</Badge>
-                </Link>
-              ))}
-            </div>
+          <h1>{post.title}</h1>
+          {post.excerpt?.trim() && <p className="journal-description">{post.excerpt}</p>}
+          {post.updatedAt.getTime() - post.createdAt.getTime() > 60 * 1000 && (
+            <p className="text-muted-foreground text-xs mt-4">最近编辑于 <time dateTime={post.updatedAt.toISOString()}>{formatDate(post.updatedAt)}</time></p>
           )}
+          {tags.length > 0 && <div className="journal-post-tags">{tags.map((tag) => <Link key={tag.id} href={`/tags/${tag.slug}`}># {tag.name}</Link>)}</div>}
         </header>
 
-        <img
-          src={post.coverImage || DEFAULT_COVER_IMAGE}
-          alt={post.title}
-          className="w-full aspect-video object-cover rounded-lg mb-8"
-        />
+        {post.coverImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={post.coverImage} alt={post.title} className="journal-reader-cover" />
+        )}
+        <div className="journal-reader-body"><HtmlRenderer content={post.content} /></div>
 
-        <Separator className="mb-8" />
-
-        <div className="prose-container">
-          <HtmlRenderer content={post.content} />
-        </div>
-
-        <Separator className="my-12" />
-
-        <section>
-          <div id="comments" />
-          <h2 className="text-2xl font-bold mb-6">评论 ({post.comments.length})</h2>
+        <section id="comments" className="journal-comments">
+          <h2>聊聊你的想法 <span className="text-muted-foreground text-sm font-sans">({post.comments.length})</span></h2>
           <div className="space-y-8">
             <CommentForm postId={post.id} user={commentUser} />
             <CommentList comments={post.comments} />
           </div>
         </section>
       </article>
+      <ArticleToc content={post.content} />
     </div>
   );
 }

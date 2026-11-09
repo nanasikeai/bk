@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { PostCard } from "@/components/post-card";
 import { Pagination } from "@/components/pagination";
-import { Badge } from "@/components/ui/badge";
 
 const POSTS_PER_PAGE = 9;
 
@@ -67,11 +66,12 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
   }));
 
   return (
-    <div className="container py-8">
-      <div className="mb-8">
-        <Badge variant="outline" className="mb-2">标签</Badge>
-        <h1 className="text-3xl font-bold">{tag.name}</h1>
-      </div>
+    <div className="journal-shell journal-page">
+      <header className="journal-page-heading">
+        <p className="journal-eyebrow"><span className="journal-small-rule" />TOPIC</p>
+        <h1 className="journal-heading"># {tag.name}</h1>
+        <p className="journal-description">关于这个话题，留下的文字都在这里。</p>
+      </header>
 
       {formattedPosts.length === 0 ? (
         <div className="text-center py-12">
@@ -79,7 +79,7 @@ export default async function TagPage({ params, searchParams }: TagPageProps) {
         </div>
       ) : (
         <>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="journal-index-list">
             {formattedPosts.map((post) => (
               <PostCard key={post.id} post={post} />
             ))}

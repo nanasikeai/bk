@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "首页" },
@@ -15,23 +14,17 @@ export function HeaderNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex flex-1 items-center space-x-6 text-sm font-medium">
+    <nav className="journal-nav" aria-label="主导航">
       {navItems.map((item) => {
-        const isActive =
-          item.href === "/"
-            ? pathname === "/"
-            : pathname.startsWith(item.href);
+        const isActive = item.href === "/"
+          ? pathname === "/"
+          : pathname === item.href || pathname.startsWith(`${item.href}/`);
 
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={cn(
-              "transition-colors",
-              isActive
-                ? "text-blue-600 dark:text-blue-400 font-semibold"
-                : "text-muted-foreground hover:text-foreground"
-            )}
+            aria-current={isActive ? "page" : undefined}
           >
             {item.label}
           </Link>
